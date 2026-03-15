@@ -1,24 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import type { User, AuthState } from '@/types';
 
-declare global {
-  interface Window {
-    academicAssistAjax?: {
-      ajaxUrl: string;
-      nonce: string;
-      restUrl: string;
-      isLoggedIn: boolean;
-      isAdmin?: boolean;
-      currentUser?: {
-        id: number;
-        name: string;
-        email: string;
-        roles?: string[];
-      };
-    };
-  }
-}
-
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
@@ -34,20 +16,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading: true,
   });
 
-  // Check for existing WordPress session on mount
+  // Check for existing session on mount
   useEffect(() => {
     const checkSession = async () => {
-      if (window.academicAssistAjax?.isLoggedIn && window.academicAssistAjax.currentUser) {
-        const user: User = {
-          id: window.academicAssistAjax.currentUser.id.toString(),
-          email: window.academicAssistAjax.currentUser.email,
-          name: window.academicAssistAjax.currentUser.name,
-          createdAt: new Date(),
-          isAdmin: window.academicAssistAjax.isAdmin ?? false,
-          roles: window.academicAssistAjax.currentUser.roles ?? [],
-        };
-        setState({
-          user,
+      // Mock always logged in
+      const user: User = {
+        id: '1',
+        email: 'user@example.com',
+        name: 'Demo User',
+        createdAt: new Date(),
+        isAdmin: true,
+        roles: ['administrator'],
+      };
+      setState({
+        user,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+    };
+    checkSession();
+  }, []);
           isAuthenticated: true,
           isLoading: false,
         });
@@ -60,38 +48,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     setState(prev => ({ ...prev, isLoading: true }));
-    
-    try {
-      const ajaxUrl = window.academicAssistAjax?.ajaxUrl || '/wp-admin/admin-ajax.php';
-      const nonce = window.academicAssistAjax?.nonce || '';
-      
-      const formData = new FormData();
-      formData.append('action', 'academic_assist_auth');
-      formData.append('nonce', nonce);
-      formData.append('auth_action', 'login');
-      formData.append('email', email);
-      formData.append('password', password);
-      
-      const response = await fetch(ajaxUrl, {
-        method: 'POST',
-        body: formData,
-        credentials: 'same-origin',
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        const user: User = {
-          id: data.data.user.id,
-          email: data.data.user.email,
-          name: data.data.user.name,
-          createdAt: new Date(),
-          isAdmin: data.data.user.isAdmin || false,
-          roles: data.data.user.roles ?? [],
-        };
 
-        if (window.academicAssistAjax) {
-          window.academicAssistAjax.isLoggedIn = true;
+    // Mock login - always succeed
+    setTimeout(() => {
+      const user: User = {
+        id: '1',
+        email,
+        name: email.split('@')[0],
+        createdAt: new Date(),
+        isAdmin: true,
+        roles: ['administrator'],
+      };
+      setState({
+        user,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+    }, 500);
+  }, []);
           window.academicAssistAjax.currentUser = {
             id: data.data.user.id,
             name: data.data.user.name,
@@ -117,45 +91,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = useCallback(async (name: string, email: string, password: string) => {
     setState(prev => ({ ...prev, isLoading: true }));
-    
-    try {
-      const ajaxUrl = window.academicAssistAjax?.ajaxUrl || '/wp-admin/admin-ajax.php';
-      const nonce = window.academicAssistAjax?.nonce || '';
-      
-      const formData = new FormData();
-      formData.append('action', 'academic_assist_auth');
-      formData.append('nonce', nonce);
-      formData.append('auth_action', 'register');
-      formData.append('name', name);
-      formData.append('email', email);
-      formData.append('password', password);
-      
-      const response = await fetch(ajaxUrl, {
-        method: 'POST',
-        body: formData,
-        credentials: 'same-origin',
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        const user: User = {
-          id: data.data.user.id,
-          email: data.data.user.email,
-          name: data.data.user.name,
-          createdAt: new Date(),
-          isAdmin: data.data.user.isAdmin || false,
-          roles: data.data.user.roles ?? [],
-        };
 
-        if (window.academicAssistAjax) {
-          window.academicAssistAjax.isLoggedIn = true;
-          window.academicAssistAjax.currentUser = {
-            id: data.data.user.id,
-            name: data.data.user.name,
-            email: data.data.user.email,
-            roles: data.data.user.roles ?? [],
-          };
+    // Mock register - always succeed
+    setTimeout(() => {
+      const user: User = {
+        id: '1',
+        email,
+        name,
+        createdAt: new Date(),
+        isAdmin: true,
+        roles: ['administrator'],
+      };
+      setState({
+        user,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+    }, 500);
+  }, []);
           window.academicAssistAjax.isAdmin = data.data.user.isAdmin || false;
         }
 

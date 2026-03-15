@@ -1,5 +1,5 @@
 const getBaseUrl = () => {
-  return window.academicAssistAjax?.restUrl ?? `${process.env.REACT_APP_WORDPRESS_URL}/wp-json/academic-assist/v1/`;
+  return '';
 };
 
 async function request(path: string, options: RequestInit = {}) {
