@@ -1,0 +1,14 @@
+/*
+Theme Name: Kimi React Theme
+Description: A WordPress theme that integrates the Kimi React front end with Elementor support
+Version: 1.0.0
+Author: AcademicAssist
+Text Domain: kimi-theme
+*/
+
+/* Basic theme styles - no full-screen override for Elementor compatibility */
+body { font-family: 'Inter', sans-serif; }
+#academic-assist-root {
+    width: 100%;
+    min-height: 400px;
+}
