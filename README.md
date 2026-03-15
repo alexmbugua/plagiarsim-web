@@ -16,7 +16,9 @@ A fully responsive React dashboard with serverless backend deployed on Vercel.
 - Tailwind CSS
 - Vercel (deployment + serverless functions)
 
-## React Compiler
+## Deployment
+
+Deployed on Vercel with serverless backend.
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
